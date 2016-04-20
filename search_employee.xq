@@ -1,7 +1,7 @@
-let $result := //table[@class="list"]/tbody/tr
+let $results := //table[@class="list"]/tbody/tr
 return
-  if ($result) then
-    for $tr in $result
+  if ($results) then
+    for $tr in $results
       let $person := normalize-space(data($tr/td/a/person))
       let $email := data($tr/td/a/mail/img/@alt)
       let $phone := normalize-space(data($tr/td/phone/nobr/nobr/div/a/span))
