@@ -8,4 +8,3 @@ return
       let $org := normalize-space(data($tr/td/span/a))
       return ($person, $org, $email, $phone, "--------------------------------")
   else 'No match.'
-
