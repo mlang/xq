@@ -36,6 +36,15 @@ def coins_and_precious_metals(term):
   soup = BeautifulSoup(response.text, 'lxml')
   print(xquery(function_name(), soup.find_all('table'), variables={'query': term}))
 
+@cli.command()
+@click.argument('language')
+@click.argument('query')
+def github_code_search(language, query):
+  response = get('https://github.com/search', params={'l': language, 'q': query, 'type': 'code'})
+  response.raise_for_status()
+  soup = BeautifulSoup(response.text, 'lxml')
+  print(xquery(function_name(), soup))
+
 ###############################################################################
 
 def function_name():
