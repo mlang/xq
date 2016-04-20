@@ -40,10 +40,11 @@ def coins_and_precious_metals(term):
 @click.argument('language')
 @click.argument('query')
 def github_code_search(language, query):
-  response = get('https://github.com/search', params={'l': language, 'q': query, 'type': 'code'})
+  """Search for source code on GitHub."""
+  base = 'https://github.com/search'
+  response = get(base, params={'l': language, 'q': query, 'type': 'code'})
   response.raise_for_status()
-  soup = BeautifulSoup(response.text, 'lxml')
-  print(xquery(function_name(), soup))
+  print(xquery(function_name(), BeautifulSoup(response.text, 'lxml'), base=base))
 
 ###############################################################################
 
@@ -56,7 +57,7 @@ def drop_dtd(soup):
     dtd.extract()
   return soup
 
-def xquery(xq_base, context=None, variables={}):
+def xquery(xq_base, context=None, variables={}, base=None):
   cmd = ['xqilla']
   if context is not None:
     if type(context) is BeautifulSoup:
@@ -75,13 +76,12 @@ def xquery(xq_base, context=None, variables={}):
     else:
       cmd.extend(['-i', context])
   cmd.extend(chain.from_iterable(['-v', k, v] for k, v in variables.items()))
+  if base is not None:
+    cmd.extend(['-b', base])
   cmd.append(abspath(path.join(dirname(__file__), xq_base + ".xq")))
 
   output = run(cmd, stdout=PIPE, check=True).stdout.decode('utf-8')
-
-  if type(context) is NamedTemporaryFile:
-    context.close()
-
+  if type(context) is NamedTemporaryFile: context.close()
   return output
 
 if __name__ == '__main__':
