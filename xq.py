@@ -33,12 +33,12 @@ def erstegroup():
   """Quick access to erstegroup.com."""
 
 @erstegroup.command()
-@argument('term')
-def coins_and_precious_metals(term):
+@option('--search', '-s', default='',
+        help='Only include results which contain this substring.')
+def coins_and_precious_metals(search):
   """Display current pricing of coins and precious metals."""
   scrape(get='https://produkte.erstegroup.com/Retail/de/MarketsAndTrends/Currencies/Sites/EB_Fixings_and_Downloads/Coins_and_Precious_Metals/index.phtml',
-         find_all='table',
-         xquery_vars={'query': term})
+         xquery_vars={'query': search})
 
 @xq.group('github.com')
 def github():
@@ -64,13 +64,12 @@ def parse_html(**kwargs):
 
 ###############################################################################
 
-def scrape(get=None, post=None, find_all=None,
+def scrape(get=None, post=None,
            xquery_name=None, xquery_vars={}, **kwargs):
   """Execute a XQuery file.
+
   When either get or post is specified, fetch the resource and run it through
   BeautifulSoup, passing it as context to the XQuery.
-  If find_all is given, wrap the result of executing find_all on
-  the BeautifulSoup in an artificial HTML body.
   If xquery_name is not specified, the callers function name is used.
   xquery_name combined with extension ".xq" is searched in the directory
   where this Python script resides and executed with XQilla.
@@ -91,30 +90,21 @@ def scrape(get=None, post=None, find_all=None,
   if response is not None:
     response.raise_for_status()
     context = BeautifulSoup(response.text, 'lxml')
+
     dtd = next(context.descendants)
-    if type(dtd) is Doctype:
-      dtd.extract()
-    if find_all is not None:
-      context = context.find_all(find_all)
+    if type(dtd) is Doctype: dtd.extract()
+    for script in context.find_all('script'): script.extract()
+
     url = response.url
 
   if xquery_name is None:
     xquery_name = currentframe().f_back.f_code.co_name
   cmd = ['xqilla']
-  if context is not None:
-    if type(context) is BeautifulSoup:
-      soup = context
-      context = NamedTemporaryFile(mode='w')
-      print(soup, file=context)
-      cmd.extend(['-i', context.name])
-    elif isinstance(context, list) or isinstance(context, ResultSet):
-      tags = context
-      context = NamedTemporaryFile(mode='w')
-      print('<html><body>', file=context)
-      for item in tags: print(item, file=context)
-      print('</body></html>', file=context)
-      context.flush()
-      cmd.extend(['-i', context.name])
+  if type(context) is BeautifulSoup:
+    soup = context
+    context = NamedTemporaryFile(mode='w')
+    print(soup, file=context)
+    cmd.extend(['-i', context.name])
   cmd.extend(chain.from_iterable(['-v', k, v] for k, v in xquery_vars.items()))
   if url is not None:
     cmd.extend(['-b', url])
