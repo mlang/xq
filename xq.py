@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 from bs4 import BeautifulSoup
 from bs4.element import Doctype, ResultSet
-from click import argument, group
+from click import argument, group, option
 from inspect import currentframe
 from itertools import chain
 from os import path
@@ -15,12 +15,10 @@ import requests
 @group()
 def xq():
   """Web scraping for command-line users."""
-  pass
 
 @xq.group('online.tugraz.at')
 def online():
   """Quick access to online.tugraz.at."""
-  pass
 
 @online.command('bedienstete')
 @argument('term')
@@ -32,7 +30,7 @@ def search_employee(term):
 
 @xq.group('erstegroup.com')
 def erstegroup():
-  pass
+  """Quick access to erstegroup.com."""
 
 @erstegroup.command()
 @argument('term')
@@ -45,10 +43,9 @@ def coins_and_precious_metals(term):
 @xq.group('github.com')
 def github():
   """Quick access to github.com."""
-  pass
   
 @github.command('code_search')
-@argument('language')
+@option('--language', '-l', prompt=True)
 @argument('query')
 def github_code_search(language, query):
   """Search for source code."""
