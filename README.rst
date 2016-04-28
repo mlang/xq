@@ -6,11 +6,17 @@ This is an experimental playground for web scraping with XQuery.
 Dependencies
 ------------
 
-* Python 3.5
-* Python click
-* Python Requests
-* Beautiful Soup 4
-* XQilla 2.3
+* `Python`_ >= 3.5
+* `Click`_
+* `Requests`_
+* `Beautiful Soup`_
+* `XQilla`_
+
+.. _Python: https://www.python.org/
+.. _Click: http://click.pocoo.org/5/
+.. _Requests: http://docs.python-requests.org/en/master/
+.. _Beautiful Soup: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+.. _XQilla: http://xqilla.sourceforge.net/HomePage
 
 Overview
 --------
