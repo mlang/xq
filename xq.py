@@ -67,11 +67,12 @@ def post():
   """Quick access to post.at."""
 
 @post.command()
+@option("--verbose", "-v", default=False, is_flag=True)
 @argument('id')
-def sendungsverfolgung(id):
+def sendungsverfolgung(verbose, id):
   """Track a shippment ID."""
   scrape(get='https://www.post.at/sendungsverfolgung.php/details',
-         params={'pnum1': id})
+          params={'pnum1': id}, xquery_vars={'verbosity': 'please' if verbose else ''})
 
 ###############################################################################
 
