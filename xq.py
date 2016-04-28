@@ -62,6 +62,17 @@ def parse_html(**kwargs):
   """
   scrape(xquery_vars=kwargs)
 
+@xq.group("post.at")
+def post():
+  """Quick access to post.at."""
+
+@post.command()
+@argument('id')
+def sendungsverfolgung(id):
+  """Track a shippment ID."""
+  scrape(get='https://www.post.at/sendungsverfolgung.php/details',
+         params={'pnum1': id})
+
 ###############################################################################
 
 def scrape(get=None, post=None,
