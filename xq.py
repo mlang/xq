@@ -75,8 +75,7 @@ def sendungsverfolgung(id):
 
 ###############################################################################
 
-def scrape(get=None, post=None,
-           xquery_name=None, xquery_vars={}, **kwargs):
+def scrape(get=None, post=None, xquery_name=None, xquery_vars={}, **kwargs):
   """Execute a XQuery file.
 
   When either get or post is specified, fetch the resource and run it through
