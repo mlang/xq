@@ -72,7 +72,8 @@ def post():
 def sendungsverfolgung(verbose, id):
   """Track a shippment ID."""
   scrape(get='https://www.post.at/sendungsverfolgung.php/details',
-          params={'pnum1': id}, xquery_vars={'verbosity': 'please' if verbose else ''})
+         params={'pnum1': id},
+         xquery_vars={'verbosity': 'please' if verbose else 'no, thanks'})
 
 ###############################################################################
 
@@ -108,8 +109,6 @@ def scrape(get=None, post=None, xquery_name=None, xquery_vars={}, **kwargs):
 
     url = response.url
 
-  if xquery_name is None:
-    xquery_name = currentframe().f_back.f_code.co_name
   cmd = ['xqilla']
   if type(context) is BeautifulSoup:
     soup = context
@@ -119,6 +118,8 @@ def scrape(get=None, post=None, xquery_name=None, xquery_vars={}, **kwargs):
   cmd.extend(chain.from_iterable(['-v', k, v] for k, v in xquery_vars.items()))
   if url is not None:
     cmd.extend(['-b', url])
+  if xquery_name is None:
+    xquery_name = currentframe().f_back.f_code.co_name
   cmd.append(abspath(path.join(dirname(__file__), xquery_name + ".xq")))
 
   output = run(cmd, stdout=PIPE).stdout.decode('utf-8')
